@@ -1,28 +1,24 @@
-var selenium = require('selenium-standalone');
+const selenium = require('selenium-standalone');
 
-module.exports = function(gemini, opts) {
-  var server;
+module.exports = (gemini, opts) => {
+  let server;
 
-  gemini.on('startRunner', function(runner) {
+  gemini.on('startRunner', (runner) => {
     console.log('Starting Selenium ...');
-
-    var ret = new Promise(function(resolve, reject) {
-      selenium.start(function(err, child) {
+    return new Promise((resolve, reject) => {
+      selenium.start((err, child) => {
         server = child;
-        server.stderr.on('data', function(data) {
-          if (/main: Started.*HTTP/.test(data.toString())) {
-            console.log(data.toString());
-            resolve();
-          }
-        });
+        if (err) {
+          console.error(err);
+          return reject(err);
+        }
+        resolve();
       });
     });
-    return ret;
   });
 
-  gemini.on('endRunner', function(runner, data) {
+  gemini.on('endRunner', (runner, data) => {
     console.log('Selenium closed.');
     return server.kill();
   });
 };
-
