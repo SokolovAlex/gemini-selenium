@@ -7,6 +7,7 @@ module.exports = (gemini, opts) => {
     console.log('Starting Selenium ...');
     return new Promise((resolve, reject) => {
       selenium.start((err, child) => {
+        console.log('Selenium started...');
         server = child;
         if (err) {
           console.error(err);
